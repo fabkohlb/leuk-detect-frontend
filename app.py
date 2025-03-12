@@ -1,19 +1,28 @@
 import streamlit as st
 import requests
 from PIL import Image
+import io
+
+# Make use of whole screen
+st.set_page_config(layout="wide")
 
 ##### HEADER #####
 st.markdown("""# Blood cancer prediction model
-    Using deep learning (CNN) to detect immature leukocytes
+    Using deep learning (CNN) to detect immature leukocytes to identify patients suffering from Acute Myeloid Leukemia (AML).
     
-    This model is trained on 18,000 cells to discriminate 15 leukocyte subclasses.""")
+    This model is trained on >18,000 cells to discriminate 15 leukocyte subclasses.
+    
+    Workflow
+    1) Upload images
+    2) Send images to API
+    3) Perform prediction""")
 
 ##### SPLIT WEBSITE INTO 2 SIDES #####
 cols = st.columns(2)
 
 # Code for column 1
 with cols[0]:
-    st.markdown("### Artificial patient (100 cells)")
+    st.markdown("### Artificial patient (100 random selected cells)")
     
     # Create a 10x10 grid
     grid_size = 10
@@ -47,20 +56,70 @@ with cols[0]:
 
 # Code for column 2
 with cols[1]:
+    
+    #####  PREDICTION BUTTON #####
+    st.write("Prediction")
+    # Create a button that triggers the prediction when clicked
+    if st.button("Predict"):
+        # Define the URL of the prediction endpoint
+        url = "http://127.0.0.1:8000/predict"
+
+        # Send a POST request to the API
+        response = requests.get(url)
+
+        # Check if the response was successful
+        if response.status_code == 200:
+            # Parse the JSON response and extract the prediction value
+            response_data = response.json()
+            prediction = response_data.get("prediction", "No prediction found")
+            
+            # Print the prediction result
+            st.write(f"Prediction: {prediction}")
+            
+            ### DUMMY - NEEDS TO BE ADAPTED TO REAL RESULT ###
+            if prediction > 8:
+                st.write("Dummy result: AML confirmed - patient suffers from AML")
+            elif prediction > 3:
+                st.write("Dummy result: Precursor cells found - genetic testing for AML recommended")
+            else:
+                st.write("Dummy result: No precursor cells found - no signs of hematologic malignancy")
+
+        else:
+            # If there was an error, print the error message
+            st.write(f"Error: {response.status_code} - {response.text}")
+        
+        print(type(prediction))
+        print(prediction)
+        
     st.markdown("""
-    **Leukemia Risk Assessment:**
+    **Leukemia Risk Reference:**
     - **< 0% precursors:** No evidence of leukemia
     - **> 0% and < 20%:** Precursor cells detected, genetic tests for AML confirmation required
     - **> 20% precursors:** AML confirmed
     """)
 
-##### IMAGE SAVE FUNCTION #####
-st.write("You can upload multiple images and save them to the server.")
+st.markdown("---")
 
-if st.button("Save Images"):
+#####  SEND TO API BUTTON #####
+st.write("Press button to send images to API")
+if st.button("Send to API"):
     if uploaded_files:
-        files = [("images", (image.name, image.getvalue())) for image in uploaded_files]
-        response = requests.post("http://localhost:8000/save_images/", files=files)
-        st.write(response.json())
+        uploaded_images_urls = []  # Reset the list
+
+        for uploaded_file in uploaded_files:
+            img_bytes = uploaded_file.getvalue()
+            files = {"file": (uploaded_file.name, img_bytes, "image/jpeg")}
+
+            response = requests.post("http://127.0.0.1:8000/uploadfile/", files=files)
+
+            if response.status_code == 200:
+                response_data = response.json()
+            else:
+                st.write("Error:", response.text)
+
+        st.write("Images uploaded to API")
     else:
         st.write("No images uploaded")
+        
+st.markdown("---")
+
