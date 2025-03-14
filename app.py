@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
 from PIL import Image
-import io
+import pandas as pd
+from collections import Counter
 
 # Make use of whole screen
 st.set_page_config(layout="wide")
@@ -20,7 +21,7 @@ st.markdown("""# Blood cancer prediction model
 ##### SPLIT WEBSITE INTO 2 SIDES #####
 cols = st.columns(2)
 
-# Code for column 1
+# Code for column 1 (left side)
 with cols[0]:
     st.markdown("### Artificial patient (100 random selected cells)")
     
@@ -50,15 +51,15 @@ with cols[0]:
         for col in range(grid_size):
             with grid_cols[row][col]:
                 if images[row][col]:
-                    st.image(images[row][col], caption=f"Image {row * grid_size + col + 1}", use_container_width=True)
+                    st.image(images[row][col], use_container_width=True) #caption=f"Image {row * grid_size + col + 1}", 
                 else:
                     st.write("⬜")  # Placeholder for empty cells
 
-# Code for column 2
+# Code for column 2 (right side)
 with cols[1]:
     
     #####  PREDICTION BUTTON #####
-    st.write("Prediction")
+    st.write("**Prediction**")
     # Create a button that triggers the prediction when clicked
     if st.button("Predict"):
         # Define the URL of the prediction endpoint
@@ -71,25 +72,87 @@ with cols[1]:
         if response.status_code == 200:
             # Parse the JSON response and extract the prediction value
             response_data = response.json()
-            prediction = response_data.get("prediction", "No prediction found")
+            predictions = response_data.get("predictions", "No prediction found")
+            #print(type(predictions))
+            #print(predictions)
             
-            # Print the prediction result
-            st.write(f"Prediction: {prediction}")
+            # Mapping of numbers to labels of celltypes
+            label_mapping = {0: 'BAS',
+                            1: 'EBO',
+                            2: 'EOS',
+                            3: 'KSC',
+                            4: 'LYA',
+                            5: 'LYT',
+                            6: 'MMZ',
+                            7: 'MOB',
+                            8: 'MON',
+                            9: 'MYB',
+                            10: 'MYO',
+                            11: 'NGB',
+                            12: 'NGS',
+                            13: 'PMB',
+                            14: 'PMO'
+                            }
             
-            ### DUMMY - NEEDS TO BE ADAPTED TO REAL RESULT ###
-            if prediction > 8:
-                st.write("Dummy result: AML confirmed - patient suffers from AML")
-            elif prediction > 3:
-                st.write("Dummy result: Precursor cells found - genetic testing for AML recommended")
+            # Prediction result header (for DataFrame) on frontend
+            st.markdown("""
+                        **Prediction result:**
+                        """)
+            
+            # Count occurrences of filename prefixes (before '_')
+            prefix_counts = Counter([item['filename'].split('_')[0] for item in predictions])
+
+            # Count occurrences of predictions (numeric values)
+            prediction_counts = Counter([item['prediction'] for item in predictions])
+
+            # Convert prediction counts to full labels using label_mapping
+            prediction_counts_full = {label_mapping.get(int(prediction), prediction): count for prediction, count in prediction_counts.items()}
+
+            # Get all unique labels from both sources (filenames and predictions)
+            all_labels = set(prefix_counts.keys()).union(set(prediction_counts_full.keys()))
+
+            # Create a structured list for DataFrame
+            data = []
+            for label in all_labels:
+                filename_count = prefix_counts.get(label, 0)  # Count from filenames
+                prediction_count = prediction_counts_full.get(label, 0)  # Count from predictions
+                
+                # Only add row if at least one count is nonzero
+                if filename_count > 0 or prediction_count > 0:
+                    # Check if the prefix is in the label_mapping and use the full label
+                    if label in label_mapping.values():
+                        full_label = label
+                    else:
+                        full_label = label_mapping.get(int(label), label) if label.isdigit() else label
+                    data.append({
+                        "Label": full_label,
+                        "Filename Count": filename_count,
+                        "Prediction Count": prediction_count
+                    })
+            
+            # Display DataFrame with cell label and frequency
+            result = pd.DataFrame(data)
+            st.write(result)
+            
+            # Diagnostic result header
+            st.markdown("""
+                        **Diagnostic result:**
+                        """)
+    
+            # Check AML condition
+            precursor_count = prediction_counts.get(1, 0) + prediction_counts.get(3, 0) + prediction_counts.get(6, 0) + prediction_counts.get(7, 0) + prediction_counts.get(9, 0) + prediction_counts.get(10, 0) + prediction_counts.get(13, 0) + prediction_counts.get(14, 0)  
+            
+            # Diagnostic statement printed on frontend
+            if precursor_count > 20:
+                st.write(f"**{precursor_count}% precursor cells found**: 🚨 patient suffers from AML 🚨")
+            elif precursor_count > 0:
+                st.write(f"**{precursor_count}% precursor cells found**: ⚠️ genetic testing for AML recommended ⚠️")
             else:
-                st.write("Dummy result: No precursor cells found - no signs of hematologic malignancy")
+                st.write(f"**No precursor cells found**: ✅ no signs of hematologic malignancy ✅")
 
         else:
             # If there was an error, print the error message
             st.write(f"Error: {response.status_code} - {response.text}")
-        
-        print(type(prediction))
-        print(prediction)
         
     st.markdown("""
     **Leukemia Risk Reference:**
@@ -108,7 +171,7 @@ if st.button("Send to API"):
 
         for uploaded_file in uploaded_files:
             img_bytes = uploaded_file.getvalue()
-            files = {"file": (uploaded_file.name, img_bytes, "image/jpeg")}
+            files = {"file": (uploaded_file.name, img_bytes, "png")}
 
             response = requests.post("http://127.0.0.1:8000/uploadfile/", files=files)
 
