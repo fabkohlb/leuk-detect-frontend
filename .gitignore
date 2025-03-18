@@ -176,3 +176,6 @@ cython_debug/
 
 # Raw data
 raw_data/
+
+# Streamlit secrets
+.streamlit/secrets.toml

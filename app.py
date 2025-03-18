@@ -4,11 +4,17 @@ from PIL import Image
 import pandas as pd
 from collections import Counter
 
+# base URL
+base_url = "https://leukdetectdockerimage-520133089750.europe-west10.run.app"
+
 # Make use of whole screen
 st.set_page_config(layout="wide")
 
 ##### HEADER #####
 st.markdown("""# Blood cancer prediction model
+            
+    TEST
+    
     Using deep learning (CNN) to detect immature leukocytes to identify patients suffering from Acute Myeloid Leukemia (AML).
     
     This model is trained on >18,000 cells to discriminate 15 leukocyte subclasses.
@@ -63,7 +69,7 @@ with cols[1]:
     # Create a button that triggers the prediction when clicked
     if st.button("Predict"):
         # Define the URL of the prediction endpoint
-        url = "http://127.0.0.1:8000/predict"
+        url = f"{base_url}/predict"
 
         # Send a POST request to the API
         response = requests.get(url)
@@ -173,7 +179,7 @@ if st.button("Send to API"):
             img_bytes = uploaded_file.getvalue()
             files = {"file": (uploaded_file.name, img_bytes, "png")}
 
-            response = requests.post("http://127.0.0.1:8000/uploadfile/", files=files)
+            response = requests.post(f"{base_url}/uploadfile/", files=files)
 
             if response.status_code == 200:
                 response_data = response.json()
