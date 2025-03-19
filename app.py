@@ -19,42 +19,64 @@ CSS = """
 """
 st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
 
+
 # Create tabs on website
-tab1, tab2 = st.tabs(["Introduction", "Prediction"])
+tab1, tab2, tab3, tab4 = st.tabs(["Introduction", "Prediction", "Model", "Contributors"])
 
 # #Tab 1
 with tab1:
     st.markdown("""# Blood cancer prediction model
+    Acute Myeloid Leukemia (AML)
+    """)
 
-    People die because of cancer
+    with st.expander("**Introdcution**"):
+        cols = st.columns(2)
+        with cols[0]:
+            st.image("https://www.shutterstock.com/image-vector/comparison-between-normal-blood-leukemia-260nw-2582344449.jpg")
+        with cols[1]:
+            st.write('''
+                     **Etiology**
+                     - Cytogenetic alterations
+                     - Environmental factors (e.g. pesticides)
+                     - Cytostatic drugs
+                     - Other risk factors, e.g. smoking
+                     
+                     **Clinic**
+                     - AML is an acute disease
+                     - General symptoms (weakness, fever, night sweats) typically appear with a short medical history
+                     - Leukemic cells spread to blood
+                     - Susceptibility to infection due to lack of mature and functional leukocytes 
+            ''')
+       
+    with st.expander("**Routine Analysis**"):
+        cols = st.columns(2)
+        with cols[0]:
+            st.image("https://www.mindray.com/content/xpace/en/products/laboratory-diagnostics/hematology/5-part-differential-analyzers/bc-6000.thumb.319.319.png.thumb.png")
+        with cols[1]:
+            st.write('''
+                     **Steps in a Routine Blood Count Analysis**
+                    - Blood sample is drawn
+                    - Blood is loaded into an automated hematology analyzer
+                    - Analyzer counts and differentiates blood cells
+                    - If abnormal results are detected, a blood smear is prepared       
+            ''')
     
-    test
+    with st.expander("**Abnormal resutls**"):
+        cols = st.columns(2)
+        with cols[0]:
+            st.image("https://www.berufsberatung.ch/web_file/getbb?id=7591&mime=image/jpeg&original_name=Tech_analyse_bio_08_MG.jpg")
+        with cols[1]:
+            st.write('''
+                     **Steps in a Routine Blood Count Analysis**
+                    - A specialist examines the smear under a microscope to check for irregularities in cell shape, size, or presence of abnormal cells
+                    - Results depend on experience of examiner
+                    - Very time consuming
+            ''')
+            
+            
+            
     
-    test""")
-    
-    st.warning("Test")
 
-    #image_url = "https://medlineplus.gov/images/LeukemiaWBC_share.jpg"
-    #st.image(image_url)
-
-
-    
-    with st.expander("See explanation"):
-        st.write('''
-            The chart above shows some numbers I picked for you.
-            I rolled actual dice for these, so they're *guaranteed* to
-            be random.
-        ''')
-        st.image("https://static.streamlit.io/examples/dice.jpg")
-    
-    with st.expander("Column try"):
-        st.write('''
-            The chart above shows some numbers I picked for you.
-            I rolled actual dice for these, so they're *guaranteed* to
-            be random.
-        ''')
-        st.image("https://static.streamlit.io/examples/dice.jpg")
-    columns = st.columns(3)
     
     
 ## Tab 2
@@ -135,40 +157,40 @@ with tab2:
 
                     # Mapping of numbers to labels of celltypes
                     # 15 classes
-                    # label_mapping = {
-                    #     0: 'BAS',
-                    #     1: 'EBO',
-                    #     2: 'EOS',
-                    #     3: 'KSC',
-                    #     4: 'LYA',
-                    #     5: 'LYT',
-                    #     6: 'MMZ',
-                    #     7: 'MOB',
-                    #     8: 'MON',
-                    #     9: 'MYB',
-                    #     10: 'MYO',
-                    #     11: 'NGB',
-                    #     12: 'NGS',
-                    #     13: 'PMB',
-                    #     14: 'PMO'
-                    # }
-                    
-                    # 13 classes (no LYA, no KSC)
                     label_mapping = {
                         0: 'BAS',
                         1: 'EBO',
                         2: 'EOS',
-                        3: 'LYT',
-                        4: 'MMZ',
-                        5: 'MOB',
-                        6: 'MON',
-                        7: 'MYB',
-                        8: 'MYO',
-                        9: 'NGB',
-                        10: 'NGS',
-                        11: 'PMB',
-                        12: 'PMO'
+                        3: 'KSC',
+                        4: 'LYA',
+                        5: 'LYT',
+                        6: 'MMZ',
+                        7: 'MOB',
+                        8: 'MON',
+                        9: 'MYB',
+                        10: 'MYO',
+                        11: 'NGB',
+                        12: 'NGS',
+                        13: 'PMB',
+                        14: 'PMO'
                     }
+                    
+                    # 13 classes (no LYA, no KSC)
+                    # label_mapping = {
+                    #     0: 'BAS',
+                    #     1: 'EBO',
+                    #     2: 'EOS',
+                    #     3: 'LYT',
+                    #     4: 'MMZ',
+                    #     5: 'MOB',
+                    #     6: 'MON',
+                    #     7: 'MYB',
+                    #     8: 'MYO',
+                    #     9: 'NGB',
+                    #     10: 'NGS',
+                    #     11: 'PMB',
+                    #     12: 'PMO'
+                    # }
 
                     full_name_mapping = {
                         'BAS': 'Basophil',
@@ -238,9 +260,9 @@ with tab2:
                                     """)
 
                         # Check AML condition with 15 classes
-                        # precursor_count = prediction_counts.get(1, 0) + prediction_counts.get(6, 0) + prediction_counts.get(7, 0) + prediction_counts.get(9, 0) + prediction_counts.get(10, 0) + prediction_counts.get(13, 0) + prediction_counts.get(14, 0)
+                        precursor_count = prediction_counts.get(1, 0) + prediction_counts.get(6, 0) + prediction_counts.get(7, 0) + prediction_counts.get(9, 0) + prediction_counts.get(10, 0) + prediction_counts.get(13, 0) + prediction_counts.get(14, 0)
                         # Check AML condition with 13 classes
-                        precursor_count = prediction_counts.get(1, 0) + prediction_counts.get(4, 0) + prediction_counts.get(5, 0) + prediction_counts.get(7, 0) + prediction_counts.get(8, 0) + prediction_counts.get(11, 0) + prediction_counts.get(12, 0)
+                        # precursor_count = prediction_counts.get(1, 0) + prediction_counts.get(4, 0) + prediction_counts.get(5, 0) + prediction_counts.get(7, 0) + prediction_counts.get(8, 0) + prediction_counts.get(11, 0) + prediction_counts.get(12, 0)
 
                         # Diagnostic statement printed on frontend
                         if precursor_count > 20:
@@ -295,3 +317,27 @@ with tab2:
             st.write("No images uploaded")
 
     st.markdown("---")
+
+# MODEL HARDFACTS
+with tab3:
+     st.markdown("""# Transformer
+
+    Previously CNN
+    
+    Transformer
+    
+    Pros: higher accuracy etc.""")
+
+# CONTRIBUTORS
+with tab4:
+     st.markdown("""# Team
+
+    Fabian
+    
+    Fredi
+    
+    Oskar
+    
+    Anton
+    
+    """)
