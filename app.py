@@ -41,9 +41,7 @@ with tab1:
                      
                      **Clinic**
                      - AML is an acute disease
-                     - General symptoms (weakness, fever, night sweats) typically appear with a short medical history
-                     - Leukemic cells spread to blood
-                     - Susceptibility to infection due to lack of mature and functional leukocytes 
+                     - Leukemic cells spread to blood & disturb immune system
             ''')
        
     with st.expander("**Routine Analysis**"):
@@ -79,7 +77,7 @@ with tab2:
 
     Using deep learning (Transformer) to detect immature leukocytes to identify patients suffering from Acute Myeloid Leukemia (AML).
 
-    This model is trained on >18,000 cells to discriminate 15 leukocyte subclasses provided by Munic University Hospital (MUH).
+    This model is trained on >18,000 cells to discriminate 15 leukocyte subclasses provided by Munich University Hospital (MUH).
 
     Workflow:
     1) Upload single cell images (400x400) to streamlit
@@ -131,8 +129,8 @@ with tab2:
         with inner_cols[0]:
 
             #####  SEND TO API BUTTON #####
-            st.write("**Press button to upload images:**")
-            if st.button("Upload"):
+            st.write("**Press button to transfer images:**")
+            if st.button("Transfer"):
                 if uploaded_files:
                     uploaded_images_urls = []  # Reset the list
                     progress_bar = st.progress(0)  # Initialize progress bar
@@ -286,6 +284,23 @@ with tab2:
             # Display DataFrame with cell label and frequency
             result = pd.DataFrame(data)
             st.write(result)
+        
+        
+            ####### ATTEMPT TO CHANGE FONT COLOR #################################################################################################################################### 
+            
+            # Kritische Zelltypen
+            critical_cells = {"EBO", "KSC", "MMZ", "MOB", "MYB", "MYO", "PMB", "PMO"}
+
+            # Bedingtes Styling für Textfarbe
+            def highlight_cells(row):
+                return [f"color: red" if row["Celltype"] in critical_cells else "" for _ in row]
+
+            # Style anwenden
+            styled_df = result.style.apply(highlight_cells, axis=1)
+        
+            st.dataframe(styled_df)
+
+            ###########################################################################################################################################        
             
             container = st.container()
         
@@ -326,7 +341,7 @@ with tab3:
     
     img_fabian = "https://media.licdn.com/dms/image/v2/C5603AQGyQVeqi9rrJQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1612894128703?e=1747872000&v=beta&t=dbq7phLz7a-qOu2cgV78f7qYHWHf8XOEzTG-sXxu0FY"
     img_oskar = "https://media.licdn.com/dms/image/v2/D4D03AQGjLmAa0JoJcA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1724488199292?e=1747872000&v=beta&t=MfqfbXpExhJ_JAbgnV51zou5Pe_7__9YxUpv6ZbYMCw"
-    img_frederik = "https://media.licdn.com/dms/image/v2/D4E35AQF8FF0bl8RxuQ/profile-framedphoto-shrink_400_400/profile-framedphoto-shrink_400_400/0/1729088154728?e=1743084000&v=beta&t=kSM_w5OWFWe-HitIZwaDU0HdKal5o7BvgvIHwvUl1ww"
+    img_frederik = "https://media.licdn.com/dms/image/v2/D4E03AQGzE7gHnfRcpA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1729088115366?e=1747872000&v=beta&t=cI6aSE4KLlWHrbrJMihSxh33a0aWLVwqN4rBTDK62a0"
     img_anton = "https://media.licdn.com/dms/image/v2/C4D03AQHFsthN695zcA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1596574176654?e=1747872000&v=beta&t=Y9CU9so15_lCyk7hpMGKRY01_BWIAkikzIk0WgBdFIA"
     
     people = [
