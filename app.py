@@ -81,7 +81,7 @@ with tab2:
 
     Workflow:
     1) Upload single cell images (400x400) to streamlit
-    2) Upload images to API
+    2) Transfer images to deep learning model
     3) Perform prediction""")
 
     ##### SPLIT WEBSITE INTO 2 SIDES #####
@@ -283,8 +283,19 @@ with tab2:
 
             # Display DataFrame with cell label and frequency
             result = pd.DataFrame(data)
-            st.write(result)     
             
+             # Critical cells
+            critical_cells = {"Erythroblast", "Smudge cell", "Metamyelocyte", "Monoblast", "Myelocyte", "Myeloblast", "Promyelocyte (bilobed)", "Promyelocyte"}
+
+            # Changing font color for critial cells
+            def highlight_cells(row):
+                return [f"color: red" if row["Celltype"] in critical_cells else "" for _ in row]
+
+            # Apply style
+            styled_df = result.style.apply(highlight_cells, axis=1)
+        
+            st.write(styled_df)
+
             container = st.container()
         
             with container:
