@@ -36,9 +36,7 @@ with tab1:
         with cols[1]:
             st.write('''
                      **Etiology**
-                     - Cytogenetic alterations
-                     - Environmental factors (e.g. pesticides)
-                     - Cytostatic drugs
+                     - Cytogenetic alterations, environmental factors (e.g. pesticides), cytostatic drugs
                      - Other risk factors, e.g. smoking
                      
                      **Clinic**
@@ -55,41 +53,36 @@ with tab1:
         with cols[1]:
             st.write('''
                      **Steps in a Routine Blood Count Analysis**
-                    - Blood sample is drawn
                     - Blood is loaded into an automated hematology analyzer
                     - Analyzer counts and differentiates blood cells
                     - If abnormal results are detected, a blood smear is prepared       
             ''')
     
-    with st.expander("**Abnormal resutls**"):
+    with st.expander("**Abnormal results**"):
         cols = st.columns(2)
         with cols[0]:
             st.image("https://www.berufsberatung.ch/web_file/getbb?id=7591&mime=image/jpeg&original_name=Tech_analyse_bio_08_MG.jpg")
         with cols[1]:
             st.write('''
-                     **Steps in a Routine Blood Count Analysis**
+                     **Verification of abnormal results**
                     - A specialist examines the smear under a microscope to check for irregularities in cell shape, size, or presence of abnormal cells
+                    - 100 cells must be counted
                     - Results depend on experience of examiner
                     - Very time consuming
             ''')
             
-            
-            
-    
-
-    
     
 ## Tab 2
 with tab2:
     ##### HEADER #####
-    st.markdown("""# Blood cancer prediction model
+    st.markdown("""# LEUK-DETECT
 
-    Using deep learning (CNN) to detect immature leukocytes to identify patients suffering from Acute Myeloid Leukemia (AML).
+    Using deep learning (Transformer) to detect immature leukocytes to identify patients suffering from Acute Myeloid Leukemia (AML).
 
     This model is trained on >18,000 cells to discriminate 15 leukocyte subclasses provided by Munic University Hospital (MUH).
 
     Workflow:
-    1) Upload single cell images (400x400)
+    1) Upload single cell images (400x400) to streamlit
     2) Send images to API
     3) Perform prediction""")
 
@@ -192,6 +185,7 @@ with tab2:
                     #     12: 'PMO'
                     # }
 
+                    # 15 classes
                     full_name_mapping = {
                         'BAS': 'Basophil',
                         'EBO': 'Erythroblast',
@@ -265,7 +259,7 @@ with tab2:
                         # precursor_count = prediction_counts.get(1, 0) + prediction_counts.get(4, 0) + prediction_counts.get(5, 0) + prediction_counts.get(7, 0) + prediction_counts.get(8, 0) + prediction_counts.get(11, 0) + prediction_counts.get(12, 0)
 
                         # Diagnostic statement printed on frontend
-                        if precursor_count > 20:
+                        if precursor_count > 19:
                             st.error(f"**{precursor_count}% precursor cells found**: 🚨 patient suffers from AML 🚨")
                         elif precursor_count > 0:
                             st.error(f"**{precursor_count}% precursor cells found**: ⚠️ genetic testing for AML recommended ⚠️")
