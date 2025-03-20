@@ -36,8 +36,9 @@ with tab1:
         with cols[1]:
             st.write('''
                      **Etiology**
-                     - Cytogenetic alterations, environmental factors (e.g. pesticides)
-                     - Other risk factors, e.g. smoking
+                     - Cytogenetic alterations
+                     - Environmental factors (e.g. pesticides)
+                     - Other risk factors (e.g. smoking)
                      
                      **Clinic**
                      - AML is an acute disease
@@ -63,9 +64,8 @@ with tab1:
         with cols[1]:
             st.write('''
                      **Verification of abnormal results**
-                    - A specialist examines the smear under a microscope to check for irregularities in cell shape, size, or presence of abnormal cells
+                    - Specialist examines the blood under a microscope to check the presence of abnormal cells
                     - 100 cells must be counted
-                    - Results depend on experience of examiner
                     - Very time consuming
             ''')
             
