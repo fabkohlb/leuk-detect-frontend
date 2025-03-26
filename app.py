@@ -1,8 +1,10 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import requests
 from PIL import Image
 import pandas as pd
 from collections import Counter
+
 
 # base URL
 base_url = "https://leukdetectdockerimage-520133089750.europe-west10.run.app"
@@ -21,57 +23,70 @@ st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
 predicted = False
 
 # Create tabs on website
-tab1, tab2, tab3 = st.tabs(["Introduction", "Prediction", "Contributors"])
+# tab1, tab2, tab3 = st.tabs(["Introduction", "Prediction", "Contributors"])  # 3 tabs: with introduction
+tab2, tab3 = st.tabs(["Prediction", "Contributors"])    # 2 tabs: no introduction
 
-# #Tab 1
-with tab1:
-    st.markdown("""# Blood cancer prediction model
-    Acute Myeloid Leukemia (AML)
-    """)
+# Tab 1 - INTRODUCTION
+# with tab1:
+#     st.markdown("""# Blood cancer prediction model
+#     Acute Myeloid Leukemia (AML)
+#     """)
 
-    with st.expander("**Introdcution**"):
-        cols = st.columns(2)
-        with cols[0]:
-            st.image("https://www.shutterstock.com/image-vector/comparison-between-normal-blood-leukemia-260nw-2582344449.jpg")
-        with cols[1]:
-            st.write('''
-                     **Etiology**
-                     - Cytogenetic alterations
-                     - Environmental factors (e.g. pesticides)
-                     - Other risk factors (e.g. smoking)
+#     with st.expander("**Introdcution**"):
+#         cols = st.columns(2)
+#         with cols[0]:
+#             st.image("https://www.shutterstock.com/image-vector/comparison-between-normal-blood-leukemia-260nw-2582344449.jpg")
+#         with cols[1]:
+#             st.write('''
+#                      **Etiology**
+#                      - Cytogenetic alterations
+#                      - Environmental factors (e.g. pesticides)
+#                      - Other risk factors (e.g. smoking)
                      
-                     **Clinic**
-                     - AML is an acute disease
-                     - Leukemic cells spread to blood & disturb immune system
-            ''')
+#                      **Clinic**
+#                      - AML is an acute disease
+#                      - Leukemic cells spread to blood & disturb immune system
+#             ''')
        
-    with st.expander("**Routine Analysis**"):
-        cols = st.columns(2)
-        with cols[0]:
-            st.image("https://www.mindray.com/content/xpace/en/products/laboratory-diagnostics/hematology/5-part-differential-analyzers/bc-6000.thumb.319.319.png.thumb.png")
-        with cols[1]:
-            st.write('''
-                     **Steps in a Routine Blood Count Analysis**
-                    - Blood is loaded into an automated hematology analyzer
-                    - Analyzer counts and differentiates blood cells
-                    - If abnormal results are detected, a blood smear is prepared       
-            ''')
+#     with st.expander("**Routine Analysis**"):
+#         cols = st.columns(2)
+#         with cols[0]:
+#             st.image("https://www.mindray.com/content/xpace/en/products/laboratory-diagnostics/hematology/5-part-differential-analyzers/bc-6000.thumb.319.319.png.thumb.png")
+#         with cols[1]:
+#             st.write('''
+#                      **Steps in a Routine Blood Count Analysis**
+#                     - Blood is loaded into an automated hematology analyzer
+#                     - Analyzer counts and differentiates blood cells
+#                     - If abnormal results are detected, a blood smear is prepared       
+#             ''')
     
-    with st.expander("**Abnormal results**"):
-        cols = st.columns(2)
-        with cols[0]:
-            st.image("https://www.berufsberatung.ch/web_file/getbb?id=7591&mime=image/jpeg&original_name=Tech_analyse_bio_08_MG.jpg")
-        with cols[1]:
-            st.write('''
-                     **Verification of abnormal results**
-                    - Specialist examines the blood under a microscope to check the presence of abnormal cells
-                    - 100 cells must be counted
-                    - Very time consuming
-            ''')
+#     with st.expander("**Abnormal results**"):
+#         cols = st.columns(2)
+#         with cols[0]:
+#             st.image("https://www.berufsberatung.ch/web_file/getbb?id=7591&mime=image/jpeg&original_name=Tech_analyse_bio_08_MG.jpg")
+#         with cols[1]:
+#             st.write('''
+#                      **Verification of abnormal results**
+#                     - Specialist examines the blood under a microscope to check the presence of abnormal cells
+#                     - 100 cells must be counted
+#                     - Very time consuming
+#             ''')
             
     
 ## Tab 2
 with tab2:
+    ### Warning ###
+    
+    html_model_offline = """
+    <div style="text-align: center; font-family: 'Source Sans Pro', sans-serif; color: red; margin: 0; padding: 0;">
+        Model currently offline: please contact fabian.kohlbacher@gmx.net for demo
+    </div>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    """
+    components.html(html_model_offline, height=30)
+
+    st.markdown("---")
+    
     ##### HEADER #####
     st.markdown("""# LEUK-DETECT
 
@@ -338,10 +353,10 @@ with tab3:
     img_anton = "https://media.licdn.com/dms/image/v2/C4D03AQHFsthN695zcA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1596574176654?e=1747872000&v=beta&t=Y9CU9so15_lCyk7hpMGKRY01_BWIAkikzIk0WgBdFIA"
     
     people = [
-        (img_fabian, "Fabian"),
-        (img_oskar, "Oskar"),
-        (img_frederik, "Frederik"),
-        (img_anton, "Anton")
+        (img_fabian, "Fabian Kohlbacher"),
+        (img_oskar, "Oskar Sommer"),
+        (img_frederik, "Frederik Gebhart"),
+        (img_anton, "Anton Schwericke")
     ]
 
     st.title("Leuk-Detect Team")
@@ -363,3 +378,14 @@ with tab3:
                 """,
                 unsafe_allow_html=True
             )
+            
+    st.markdown("---")
+    
+    html_contact = """
+    <div style="text-align: center; font-family: 'Source Sans Pro', sans-serif; color: black; margin: 0; padding: 0;">
+        For business business inquiries please contact: fabian.kohlbacher@gmx.net
+    </div>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    """
+    components.html(html_contact, height=30)
+        
